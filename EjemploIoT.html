@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Ejemplo de pagina</title>
+
+<style>
+	body{text-align:center}
+</style>
+</head>
+
+<body>
+
+	<div id="Ingresar">
+		<h1>Seccion ingresar</h1>
+		<h3>Nombre</h3>
+		<input id="ingresaNombre" type="text">
+		
+		<h3>Correo</h3>
+		<input id="ingresaCorreo" type="text">
+		
+		<h3>Telefono</h3>
+		<input id="ingresaTelefono" type="text">
+		<br><br>
+		
+		<button id="agregar">Agregar</button>
+		<button id="editar">Editar</button>
+		<button id="borrar">Borrar</button>
+	</div>
+
+	<div id="Buscar">
+		<h1>Seccion buscar</h1>
+		
+		<h3>Nombre</h3>
+		<input id="buscarNombre" type="text">
+		
+		<button id="buscar">Buscar</button>
+		
+		<h3 id="buscarCorreo" type=text></h3>
+		<h3 id="buscarTelefono" type=text></h3>
+	</div>
+	
+	<script type="module">
+		  // Import the functions you need from the SDKs you need
+		  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-app.js";
+		  //import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+		  // TODO: Add SDKs for Firebase products that you want to use
+		  // https://firebase.google.com/docs/web/setup#available-libraries
+
+		  // Your web app's Firebase configuration
+		  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		  const firebaseConfig = {
+			apiKey: "AIzaSyDE8BPiGuUXyffDrbC2EYnpb-NtYukvPBo",
+			authDomain: "ejemplohtml-9e7cd.firebaseapp.com",
+			databaseURL: "https://ejemplohtml-9e7cd-default-rtdb.firebaseio.com",
+			projectId: "ejemplohtml-9e7cd",
+			storageBucket: "ejemplohtml-9e7cd.appspot.com",
+			messagingSenderId: "501438339305",
+			appId: "1:501438339305:web:2fb935e654a3edbb553878",
+			measurementId: "G-BSTN73VNMT"
+		  };
+
+		  // Initialize Firebase
+		  const app = initializeApp(firebaseConfig);
+		  //const analytics = getAnalytics(app);
+		  
+		  import{getDatabase,set,get,update,remove,ref,child}
+		  from "https://www.gstatic.com/firebasejs/9.6.3/firebase-database.js";
+		  
+		  const db=getDatabase();
+		  
+		  var ingresaNombre=document.querySelector("#ingresaNombre");
+		  var ingresaCorreo=document.querySelector("#ingresaCorreo");
+		  var ingresaTelefono=document.querySelector("#ingresaTelefono");
+		  
+		  var buscarNombre=document.querySelector("#buscarNombre");
+		  var buscarCorreo=document.querySelector("#buscarCorreo");
+		  var buscarTelefono=document.querySelector("#buscarTelefono");
+		  
+		  var btnAgregar=document.querySelector("#agregar");
+		  var btnEditar=document.querySelector("#editar");
+		  var btnBorrar=document.querySelector("#borrar");
+		  var btnBuscar=document.querySelector("#buscar");
+		  
+		  function subirDatos(){
+			set(ref(db,"Usuarios/"+ingresaNombre.value),{
+				Nombre:ingresaNombre.value,
+				Correo:ingresaCorreo.value,
+				Telefono:ingresaTelefono.value
+			})
+			.then(()=>{
+				alert("Usuario registrado");
+			})
+			.catch((error)=>{
+				alert(error);
+			})
+		  }
+		  
+		  function editarDatos(){
+			update(ref(db,"Usuarios/"+ingresaNombre.value),{
+				Correo:ingresaCorreo.value,
+				Telefono:ingresaTelefono.value
+			})
+			.then(()=>{
+				alert("Usuario editado");
+			})
+			.catch((error)=>{
+				alert(error);
+			})
+		  }
+		  
+		  function borrarDatos(){
+			remove(ref(db,"Usuarios/"+ingresaNombre.value))
+			.then(()=>{
+				alert("Usuario eliminado");
+			})
+			.catch((error)=>{
+				alert(error);
+			})
+		  }
+		  
+		  function consultarDatos(){
+			//const dbref=ref(db);
+			get(child(ref(db),"Usuarios/"+buscarNombre.value))
+			.then((snapshot)=>{
+				if(snapshot.exists()){
+					buscarCorreo.innerHTML="Correo del usuario= "+snapshot.val().Correo;
+					buscarTelefono.innerHTML="Telefono del usuario= "+snapshot.val().Telefono;
+				}
+				else{
+					buscarCorreo.innerHTML="";
+					buscarTelefono.innerHTML="";
+					alert("Usuario no encontrado");
+				}
+			})
+			.catch((error)=>{
+				alert(error);
+			})
+		  }
+			
+		  
+		  btnAgregar.addEventListener("click",subirDatos)
+		  btnEditar.addEventListener("click",editarDatos)
+		  btnBorrar.addEventListener("click",borrarDatos)
+		  btnBuscar.addEventListener("click",consultarDatos)
+		  
+	</script>
+	
+</body>
+
+</html>
